@@ -1,0 +1,68 @@
+(base) L-btang:incomp btang$ java TestBankers infile.txt 10 6 7 8 
+*
+Available = 	[10 6 7 8]
+
+Allocation = 	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+RQ 0 1 1 1 1
+
+ Customer # 0 requesting 1 1 1 1 Available = 10  6  7  8  Trying to find a possible ordering: 0 1 2 3 4 Approved
+*
+Available = 	[9 5 6 7]
+
+Allocation = 	[1 1 1 1]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[5 3 6 2]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+RQ 4 6 6 6 6 
+Request exceeds need
+Denied
+RQ 2 2 4 2 2 
+
+ Customer # 2 requesting 2 4 2 2 Available = 9  5  6  7  Trying to find a possible ordering: 2 3 0 1 4 Approved
+*  
+Available = 	[7 1 4 5]
+
+Allocation = 	[1 1 1 1]	[0 0 0 0]	[2 4 2 2]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[5 3 6 2]	[4 2 3 2]	[0 1 1 1]	[6 3 3 2]	[5 6 7 5]
+RQ 1 2 2 2 
+Exception in thread "main" java.util.NoSuchElementException
+	at java.base/java.util.StringTokenizer.nextToken(StringTokenizer.java:349)
+	at TestBankers.main(TestBankers.java:98)
+(base) L-btang:incomp btang$ java TestBankers infile.txt 10 6 7 8 
+*
+Available = 	[10 6 7 8]
+
+Allocation = 	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+RL 0 5 3 6 3
+
+ Customer # 0 releasing 5 3 6 3 Available = 15  9  13  11  Allocated = [-5  -3  -6  -3  ]
+^C(base) L-btang:incomp btang$ java TestBankers infile.txt 10 6 7 8 
+RQ 0 5 3 6 3
+
+ Customer # 0 requesting 5 3 6 3 Available = 10  6  7  8  Trying to find a possible ordering: 0 1 2 3 4 Approved
+RQ 1 2 2 2 2
+
+ Customer # 1 requesting 2 2 2 2 Available = 5  3  1  5  INSUFFICIENT RESOURCES
+Denied
+*  
+Available = 	[5 3 1 5]
+
+Allocation = 	[5 3 6 3]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[1 1 1 0]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+RQ 1 2 2 1 5 
+Request exceeds need
+Denied
+RQ 1 2 1 1 2
+
+ Customer # 1 requesting 2 1 1 2 Available = 5  3  1  5  Trying to find a possible ordering: Denied
+*
+Available = 	[5 3 1 5]
+
+Allocation = 	[5 3 6 3]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]	[0 0 0 0]
+Max = 		[6 4 7 3]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]
+Need = 		[1 1 1 0]	[4 2 3 2]	[2 5 3 3]	[6 3 3 2]	[5 6 7 5]

@@ -87,6 +87,8 @@ public class BankImpl implements Bank
 	 * Determines whether granting a request results in leaving
 	 * the system in a safe state or not.
 	 *
+	 * @param threadNum - the thread number requesting resources
+	 * @param request - the resources requested by the thread
 	 * @return  true - the system is in a safe state.
 	 * @return  false - the system is NOT in a safe state.
 	 */
@@ -97,10 +99,67 @@ public class BankImpl implements Bank
 		int[][]	tempNeed = new int[n][m]; //Need 
 		boolean[] finish = new boolean[n]; //processes that successfully finished
 
+		System.out.print("\n Customer " + threadNum + " is requesting "); //print the request info
+		for (int i = 0; i < m; i++) System.out.print(request[i] + " ");
 
+		System.out.print("\n Available = "); //print the available resources
+		for (int i = 0; i < m; i++)
+			System.out.print(available[i] + "  ");
 
-		
-		return true;
+		// the request cannot be granted if the bank doesn't currently have the resources
+		for (int i = 0; i < m; i++) {
+			if (request[i] > available[i]) { //check if request exceeds available
+				System.out.println("INSUFFICIENT RESOURCES");
+				return false; 
+			}
+		}
+
+		// copy the current state so the real state is untouched
+		System.arraycopy(available, 0, work, 0, m);
+		for (int i = 0; i < n; i++) {
+			System.arraycopy(allocation[i], 0, tempAlloc[i], 0, m);
+			System.arraycopy(need[i], 0, tempNeed[i], 0, m);
+		}
+
+		// pretend request is granted, 
+		// useful for checking if the system is in a safe state without actually granting the request
+		for (int i = 0; i < m; i++) {
+			work[i] -= request[i];
+			tempAlloc[threadNum][i] += request[i];
+			tempNeed[threadNum][i] -= request[i];
+		}
+
+		System.out.print("Trying to find a possible ordering...");
+		System.out.print(" ");
+
+		// keep scanning until no unfinished thread can have its need met
+		boolean progress = true;
+		while (progress) { //as long as progress is made previous step
+			progress = false; //current progress this step is false
+			for (int i = 0; i < n; i++) {
+				if (finish[i]) //if thread i has finished, skip to next thread
+					continue;
+
+				boolean canFinish = true; //thread i can finish if all its needs are met
+				for (int j = 0; j < m && canFinish; j++) {
+					canFinish = (tempNeed[i][j] <= work[j]);
+				}
+
+				if (canFinish) { 
+					for (int j = 0; j < m; j++) //add the allocated resources to the available resources
+						work[j] += tempAlloc[i][j];
+					finish[i] = true;
+					progress = true; //set progress to true to continue the loop
+					System.out.print(i + " ");
+				}
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			if (!finish[i]) //if thread i has not finished, the system is not in a safe state
+				return false;
+		}
+		return true; //the system is in a safe state only if all threads have finished
 	}
 
 	/**

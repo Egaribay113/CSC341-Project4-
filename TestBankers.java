@@ -39,7 +39,7 @@ public class TestBankers
 
 		// create the bank
 		Bank theBank = new BankImpl(initialResources);
-		int[] maxDemand = new int[numOfResources];
+		int[] maxDemand = new int[numOfResources];  
 
 		// read initial values for maximum array 
 		String line;

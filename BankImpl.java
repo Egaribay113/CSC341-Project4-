@@ -12,7 +12,9 @@ public class BankImpl implements Bank
 	private int[] available; 	// the amount available of eah resource 
 	private int[][] maximum; 	// the maximum demand of each thread 
 	private int[][] allocation;	// the amount currently allocated to each thread	
-	private int[][] need;		// the remaining needs of each thread		
+	private int[][] need;		// the remaining needs of each thread
+	
+
 
 	/**
 	 * Create a new bank with resources.
@@ -89,6 +91,15 @@ public class BankImpl implements Bank
 	 * @return  false - the system is NOT in a safe state.
 	 */
 	private boolean isSafeState (int threadNum, int[] request) {
+
+		int[] work = new int[m]; //available 
+		int[][] tempAlloc = new int[n][m]; //allocation 
+		int[][]	tempNeed = new int[n][m]; //Need 
+		boolean[] finish = new boolean[n]; //processes that successfully finished
+
+
+
+		
 		return true;
 	}
 

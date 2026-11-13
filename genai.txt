@@ -1,0 +1,76 @@
+Generative AI Usage Log - CSC341 Project 4 (Banker's Algorithm)
+Tool: Cursor AI assistant (Claude)
+Date: Nov 12, 2026
+
+User messages are reproduced verbatim. Assistant responses are condensed but preserve their content.
+
+======================================================================
+[1] USER
+Check the entirey of my repo and determine if there are any areas in which I'm lacking, or if I went overboard. This is a student project implementation of Banker's Algorithm. Point out areas of improvement or things I could have done differently, any logical errors or actual bug fixes necessary (although it runs correctly). Basically try and turn what is likely a B grade project into an A grade
+
+[1] ASSISTANT (summary)
+Reviewed Bank.java, BankImpl.java, TestBankers.java, infile.txt, screenshot.txt, README.md.
+- The core safety algorithm in isSafeState() is correct (copy state, pretend-grant, repeatedly find a finishable thread).
+- Bugs worth fixing: releaseResources allows releasing more than allocated (negative allocation, also present in the reference); negative request values are not rejected; the harness crashes on malformed input (NoSuchElementException) or out-of-range customer numbers.
+- Overboard: the Thread.sleep "loading animation" runs inside a synchronized method, holding the bank's lock ~1.1s per request; recommended removing it and its comment.
+- Output polish: partial ordering printed on denial can look like a valid sequence; "exceeds available" message ran into previous text (reference prints "INSUFFICIENT RESOURCES"); optional warning when max demand exceeds total resources.
+- Code quality: isSafeState Javadoc had duplicate @return and no @param; isSafeState mixes printing with logic; dead commented-out code; "eah" typo; use n instead of TestBankers.NUMBER_OF_CUSTOMERS.
+- Repo hygiene: .class files committed (add .gitignore); uncommitted work and OutputSCs/; README is one line and should describe compile/run, input format, algorithm.
+
+======================================================================
+[2] USER
+I'm only supposed to touch the function isSafeState(). I made some changes based on your feedback, I feel like there's a way to optimize the current design further, rather than handling edgecases that are not explicitly necessary to catch based on the given screenshots.
+
+[2] ASSISTANT (summary)
+Suggested optimizations confined to isSafeState():
+1. Only threadNum's rows change under the hypothetical grant, so copying both full n x m matrices is unnecessary; copy just that thread's rows (memory ~2nm+m down to 3m).
+2. Count finished threads and return true as soon as all n finish, removing the final scan over finish[].
+3. Fold the pretend-grant into the copy step.
+4. Shorten overly long comments.
+Asymptotic cost stays O(n^2 * m). Provided a full example version using reqAlloc/reqNeed and a (i == threadNum) ? ... : ... selection, and noted the messages could match screenshot.txt exactly. Did not edit the file.
+
+======================================================================
+[3] USER
+I'm not gonna use your suggested new copy, but I like the conciseness of the progress checking you did over my implemenation; I did a hybrid of the two and I'm certain there's an issue I'm not picking up on. Do not explicitly fix it for me, explain what I did wrong(if so)
+
+[3] ASSISTANT (summary)
+Explained without fixing:
+1. The pretend-grant step was removed, so the method checked the current state, not the post-request state (would approve requests that should be denied).
+2. An "if (finish[i]) continue;" sat outside the for loop where i is undeclared (compile error).
+3. A stray closing brace ended the i-loop early, leaving "if (canFinish)" out of scope.
+4. "finished" was never declared (must be initialized before the while loop).
+5. "canFinish &&" inside the loop was redundant given the loop condition.
+Also noted the extra "System is (not) in a safe state" lines and "\n" before Available differ from the reference.
+
+======================================================================
+[4] USER
+check my changes once again
+
+[4] ASSISTANT (summary)
+The new version did not compile and would loop forever on unsafe states:
+- Compile: work, finish, and progress declared twice; canFinish(...) helper method does not exist (and adding one violates the only-touch-isSafeState rule); leftover old block references i/canFinish/tempAlloc out of scope.
+- Logic: work never increased when a thread finished; while (finished < n) never exits when unsafe since progress was not checked; reqAlloc/reqNeed (threadNum's row only) were used for every thread; no path returned true.
+- Cleanup: tempAlloc/tempNeed no longer filled; inconsistent indentation.
+Advised restarting from one complete loop and retesting RQ 0 5 3 6 3 then RQ 1 2 1 1 2.
+
+======================================================================
+[5] USER
+Okay, your suggestions have completely messed up my function and I regret trying to improve my code based on your suggestions. Can you revert my code to what it was when I first presented it to you?
+
+[5] ASSISTANT (summary)
+Began restoring the original isSafeState() from the first read of the file (it was never committed, so git could not restore it), including the commented-out blocking requestResources and notifyAll comment.
+
+[6] USER
+Okay, your suggestions have completely messed up my function and I regret trying to improve my code based on your suggestions. Can you revert my code to the last successful compile, keeping the change I made that didn't affect the correctness of the execution
+
+[6] ASSISTANT (summary)
+Restored the original algorithm (full state copy, separate pretend-grant loop, while (progress) loop, final finish[] check) while keeping non-behavioral changes: sleep animation removed, "INSUFFICIENT RESOURCES" message, "\n Available = " label, @param Javadoc, and the concise resource check loop
+  for (int j = 0; j < m && canFinish; j++) canFinish = (tempNeed[i][j] <= work[j]);
+Compiled and ran the screenshot scenario: RQ 0 5 3 6 3 approved with ordering 0 1 2 3 4; RQ 1 2 2 2 2 denied (INSUFFICIENT RESOURCES); RQ 1 2 1 1 2 denied (no safe ordering); final state matches screenshot.txt.
+
+======================================================================
+[7] USER
+Thank you. Take this conversation history and save it as text to a new file in the repo called "genai.txt". If possible, run the scenario screenshots and save 5 screenshots of the outputs to the folder OutputSCs.
+
+[7] ASSISTANT (summary)
+Created this file and ran the screenshot.txt scenarios, saving output images to OutputSCs/.
